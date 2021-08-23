@@ -1,0 +1,50 @@
+<!--
+ Copyright 2021 Amazon.com.
+ SPDX-License-Identifier: MIT
+-->
+
+<script type="text/x-red" data-template-name="predict">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name"></input>
+    </div>
+<div class="form-row">
+    <label for="node-input-model"><i class="fa fa-wrench"></i> Model</label>
+    <input type="text" id="node-input-model" placeholder="Model"></input>
+</div>
+
+</script>
+
+<script type="text/x-red" data-help-name="predict">
+<p>
+SageMaker Edge Manager Predictions
+</p>
+<p>
+Invokes the SageMaker Edge Manager agent using the model configured the msg.payload as input.
+Returns a byte array as output.
+</p>
+<h3>References</h3>
+<ul>
+<li>SageMaker Edge Manager</li>
+</ul>
+</script>
+
+<script type="text/javascript">
+RED.nodes.registerType('predict',{
+    category: 'SageMaker Edge Manager',
+    color:"#C0DEED",
+    defaults: {
+        model: { value: "", type: "model"},
+        name: { value: "" }
+    },
+    inputs:1,
+    outputs: 1,
+    outputLabels: ["prediction"],
+    icon: "",
+    align: "right",
+    label: function() {
+        return `Predict for ${this.name || "unknown"}`;
+    }
+});
+</script>

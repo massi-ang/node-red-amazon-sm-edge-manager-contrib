@@ -1,0 +1,51 @@
+<!--
+ Copyright 2021 Amazon.com.
+ SPDX-License-Identifier: MIT
+-->
+
+<script type="text/x-red" data-template-name="model">
+
+
+<div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Name"></input>
+</div>
+<div class="form-row">
+    <label for="node-config-input-modelName"><i class="fa fa-wrench"></i> Model Name</label>
+    <input type="text" id="node-config-input-modelName" placeholder="Model Name"></input>
+</div>
+<div class="form-row">
+    <label for="node-config-input-modelUri"><i class="fa fa-wrench"></i> Model URI</label>
+    <input type="text" id="node-config-input-modelUri" placeholder="Model URI"></input>
+</div>
+</script>
+
+<script type="text/x-red" data-help-name="model">
+<p>
+SageMaker Edge Manager Model configuration node
+</p>
+<p>
+Represents a model that can be used by a Prediction node
+</p>
+<h3>References</h3>
+<ul>
+<li>Typed Arrays</li>
+</ul>
+</script>
+
+<script type="text/javascript">
+RED.nodes.registerType('model',{
+    category: 'config',
+    color:"#C0DEED",
+    defaults: {
+        modelName: { value: ""},
+        modelUri: { value: ""},
+        name: { value: "" }
+    },
+    icon: "",
+    align: "left",
+    label: function() {
+        return `${this.modelName}: ${this.modelUri}`;
+    }
+});
+</script>
