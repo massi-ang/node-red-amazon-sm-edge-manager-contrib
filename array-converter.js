@@ -44,5 +44,5 @@ module.exports = function(RED) {
 			}
 		});
 	}
-	RED.nodes.registerType("Array Converter", ArrayConverterNode);
+	RED.nodes.registerType("array converter", ArrayConverterNode);
 };

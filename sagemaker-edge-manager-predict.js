@@ -78,7 +78,8 @@ module.exports = function(RED) {
                 const tensors = response.getTensorsList()
                 for (var i in tensors) {
                     msg.payload = tensors[i].getByteData();
-                    msg.meta = tensors[i].getTensorMetadata().getShapeList();
+                    msg.metadata = tensors[i].getTensorMetadata().getShapeList();
+                    msg.model = node.model.modelName;
                     node.send([msg,null]);
                 }
                 node.status({fill:"green",shape:"ring",text:"ready"});

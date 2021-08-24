@@ -3,7 +3,7 @@
  SPDX-License-Identifier: MIT
 -->
 
-<script type="text/x-red" data-template-name="Array Converter">
+<script type="text/x-red" data-template-name="array converter">
 
 <div class="form-row">
     <label for="node-input-dataType"><i class="fa fa-wrench"></i> Data Type</label>
@@ -26,7 +26,7 @@
 </div>
 </script>
 
-<script type="text/x-red" data-help-name="Array Converter">
+<script type="text/x-red" data-help-name="array converter">
 <p>
 Array Converter
 </p>
@@ -40,8 +40,8 @@ Converts an incoming Buffer or TypedArray into a new TypedArray of the selected 
 </script>
 
 <script type="text/javascript">
-RED.nodes.registerType('Array Converter',{
-    category: 'Byte utils',
+RED.nodes.registerType('array converter',{
+    category: 'byte utils',
     color:"#C0DEED",
     defaults: {
         dataType: { value: "Uint8"},

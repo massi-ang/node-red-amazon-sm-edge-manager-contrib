@@ -10,23 +10,19 @@ module.exports = function(RED) {
 	function SMEdgeManagerUnLoadModelNode(n) {
 		RED.nodes.createNode(this,n);
 		node.on("input", function(msg) {
-			var sendMsg = function (err, data) {
-				if (err) {
+            var req = new messages.UnLoadModelRequest();
+            req.setName(msg.model || n.modelName);
+
+            client.unLoadModel(req, function(err, response) {
+                if (err) {
 				    node.status({fill:"red",shape:"ring",text:"error"});
-                    node.error("failed: " + err.toString(), msg);
+                    node.error(err.toString(), msg);
                     node.send([null, { err: err }]);
     				return;
 				} 
-                msg.payload = data;
                 node.status({});
+				msg.model = msg.model || n.modelName;
 				node.send([msg,null]);
-			};
-            var req = new messages.UnLoadModelRequest();
-            
-            req.setName(msg.name || n.name);
-
-            client.unLoadModel(req, function(err, response) {
-                sendMsg(err, response);
             })
 		});
 	}
