@@ -35,7 +35,8 @@ module.exports = function(RED) {
 				return;
 			}
 			try {
-				const x = new type(msg.payload.buffer);
+				const c = msg.payload.slice(0); // Creates a copy of the underlying buffer
+				const x = new type(c.buffer);
 				msg.payload = x;
 				node.send([msg, null]);
 			} catch (err) {

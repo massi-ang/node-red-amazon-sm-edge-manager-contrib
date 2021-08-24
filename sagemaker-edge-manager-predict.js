@@ -24,47 +24,38 @@ module.exports = function(RED) {
         client.service.loadModel(req, function(err, response) {
             if (err) {
                 if (err.toString().includes('6')) {
-                    node.status({fill:"yellow",shape:"ring",text:"model already loaded"});
+                    node.warn(`Model ${node.model.modelName} is already loaded. It might not be the model you want.`);
                 } else {
                     node.status({fill:"red",shape:"ring",text:"error loading model"});
                     node.error(`Model URL: ${node.model.modelUri} Error ${err}`);
                     return;
                 }
             } 
-            node.status({fill:"green",shape:"dot",text:"ready"});
-        })
-        var modelReq = new messages.DescribeModelRequest();
+            var modelReq = new messages.DescribeModelRequest();
         
-        modelReq.setName(node.model.modelName);
+            modelReq.setName(node.model.modelName);
 
-        client.service.describeModel(modelReq, function (err, response) {
-            if (err) {
-                node.status({fill:"red",shape:"ring",text:"cannot retrieve model"});
-                node.error(err);
-                return;
-            }
-            const model = response.getModel();
-            // We assume only one tensor model for now
-            const metadata = model.getInputTensorMetadatasList();
-            if (metadata.length > 1) {
-                node.status({fill:"red",shape:"ring",text:"model requires >1 tensors"});
-                return;
-            }
-            node.tensorMetadata = metadata[0];
-        });
+            client.service.describeModel(modelReq, function (err, response) {
+                if (err) {
+                    node.status({fill:"red",shape:"ring",text:"cannot retrieve model"});
+                    node.error(err);
+                    return;
+                }
+                const model = response.getModel();
+                // We assume only one tensor model for now
+                const metadata = model.getInputTensorMetadatasList();
+                if (metadata.length > 1) {
+                    node.status({fill:"red",shape:"ring",text:"model requires >1 tensors"});
+                    return;
+                }
+                node.tensorMetadata = metadata[0];
+                node.status({fill:"green",shape:"dot",text:"ready"});
+            });
+        })
+        
 
 		node.on("input", function(msg) {
-			var sendMsg = function (err, data) {
-				if (err) {
-				    node.status({fill:"red",shape:"ring",text:"error"});
-                    node.error("failed: " + err.toString(), msg);
-                    node.send([null, { err: err }]);
-    				return;
-				} 
-                msg.payload = data;
-                node.status({});
-				node.send([msg,null]);
-			};
+
             var req = new messages.PredictRequest();
             var t = new messages.Tensor();
             var meta = new messages.TensorMetadata();
@@ -75,10 +66,23 @@ module.exports = function(RED) {
             t.setTensorMetadata(meta);
             t.setByteData(msg.payload);
             req.setName(node.model.modelName);
-            req.setTensorList([t]); 
+            req.setTensorsList([t]); 
 
             client.service.predict(req, function(err, response) {
-                sendMsg(err, response);
+                if (err) {
+				    node.status({fill:"red",shape:"ring",text:"error"});
+                    node.error("failed: " + err.toString(), msg);
+                    node.send([null, { err: err }]);
+    				return;
+				} 
+                const tensors = response.getTensorsList()
+                for (var i in tensors) {
+                    msg.payload = tensors[i].getByteData();
+                    msg.meta = tensors[i].getTensorMetadata().getShapeList();
+                    node.send([msg,null]);
+                }
+                node.status({fill:"green",shape:"ring",text:"ready"});
+				
             })
             
 		});
