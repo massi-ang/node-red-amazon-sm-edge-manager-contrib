@@ -9,9 +9,17 @@ module.exports = function(RED) {
 
 	function SMEdgeManagerUnLoadModelNode(n) {
 		RED.nodes.createNode(this,n);
+
+		node.model = RED.nodes.getNode(n.model);
+
+        if (node.model === undefined) {
+			node.modelName = n.modelName;
+        } else {
+			node.modelName = node.model.modelName;
+		}
 		node.on("input", function(msg) {
             var req = new messages.UnLoadModelRequest();
-            req.setName(msg.model || n.modelName);
+            req.setName(msg.modelName || node.modelName);
 
             client.unLoadModel(req, function(err, response) {
                 if (err) {
@@ -21,10 +29,10 @@ module.exports = function(RED) {
     				return;
 				} 
                 node.status({});
-				msg.model = msg.model || n.modelName;
+				msg.modelName = msg.modelName || node.modelName;
 				node.send([msg,null]);
             })
 		});
 	}
-	RED.nodes.registerType("SME Manager UnLoad Model", SMEdgeManagerUnLoadModelNode);
+	RED.nodes.registerType("unload", SMEdgeManagerUnLoadModelNode);
 };
