@@ -1,5 +1,5 @@
 {
-  "name": "node-red-sm-edge-manager-contrib",
+  "name": "node-red-amazon-sm-edge-manager-contrib",
   "version": "1.0.0",
   "description": "Node-RED nodes to work with SageMaker Edge Manager",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/massi-ang/node-red-sm-edge-manager-contrib.git"
+    "url": "git+https://github.com/massi-ang/node-red-amazon-sm-edge-manager-contrib.git"
   },
   "keywords": [
     "nodered",
@@ -24,9 +24,9 @@
   "author": "Massimiliano Angelino",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/massi-ang/node-red-sm-edge-manager-contrib/issues"
+    "url": "https://github.com/massi-ang/node-red-amazon-sm-edge-manager-contrib/issues"
   },
-  "homepage": "https://github.com/massi-ang/node-red-sm-edge-manager-contrib#readme",
+  "homepage": "https://github.com/massi-ang/node-red-amazon-sm-edge-manager-contrib#readme",
   "dependencies": {
     "@grpc/grpc-js": "^1.3.7",
     "@grpc/proto-loader": "^0.6.4",

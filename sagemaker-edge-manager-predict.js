@@ -33,7 +33,25 @@ module.exports = function(RED) {
             } 
             node.status({fill:"green",shape:"dot",text:"ready"});
         })
+        var modelReq = new messages.DescribeModelRequest();
+        
+        modelReq.setName(node.model.modelName);
 
+        client.service.describeModel(modelReq, function (err, response) {
+            if (err) {
+                node.status({fill:"red",shape:"ring",text:"cannot retrieve model"});
+                node.error(err);
+                return;
+            }
+            const model = response.getModel();
+            // We assume only one tensor model for now
+            const metadata = model.getInputTensorMetadatasList();
+            if (metadata.length > 1) {
+                node.status({fill:"red",shape:"ring",text:"model requires >1 tensors"});
+                return;
+            }
+            node.tensorMetadata = metadata[0];
+        });
 
 		node.on("input", function(msg) {
 			var sendMsg = function (err, data) {
@@ -48,29 +66,19 @@ module.exports = function(RED) {
 				node.send([msg,null]);
 			};
             var req = new messages.PredictRequest();
-            var modelReq = new messages.DescribeModelRequest();
-            var modelName = n.model.modelName;
-            modelReq.setName(modelName);
-            client.service.describeModel(req, function (err, response) {
-                if (err) {
-                    node.status({fill:"red",shape:"ring",text:"error"});
-                    node.error("failed: " + err.toString(), msg);
-                    node.send([null, { err: err }]);
-    				return;
-                }
-                response.getName
-                var t = new messages.Tensor();
-                var meta = new messages.TensorMetadata();
-                var model = response.getModel();
+            var t = new messages.Tensor();
+            var meta = new messages.TensorMetadata();
 
-                meta.setName(response.getName);
-                meta.setDataType(response.getDataType)
-                req.setName(modelName);
-                req.addTensor(msg.tensor); 
+            meta.setName(node.tensorMetadata.getName());
+            meta.setDataType(node.tensorMetadata.getDataType());
+            meta.setShapeList(node.tensorMetadata.getShapeList());
+            t.setTensorMetadata(meta);
+            t.setByteData(msg.payload);
+            req.setName(node.model.modelName);
+            req.addTensor(t); 
 
-                client.service.predict(req, function(err, response) {
-                    sendMsg(err, response);
-                })
+            client.service.predict(req, function(err, response) {
+                sendMsg(err, response);
             })
             
 		});
