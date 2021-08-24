@@ -76,10 +76,10 @@ module.exports = function(RED) {
                 client.unLoadModel(req, function(err, response) {
                     if (err) {
                         node.status({fill:"red",shape:"ring",text:"error"});
-                        rej(new Error(err));
+                        rej(err);
                         return;
                     } 
-                    node.status({});
+                    node.status({fill:"yellow", shape:"ring", text: "no model loaded"});
                     res(node.ModelName);
                 })
             });
@@ -104,7 +104,7 @@ module.exports = function(RED) {
                 client.service.predict(req, function(err, response) {
                     if (err) {
                         node.status({fill:"red",shape:"ring",text:"error"});
-                        done(new Error("failed: " + err.toString()));
+                        done(err);
                         return;
                     } 
                     const tensors = response.getTensorsList()

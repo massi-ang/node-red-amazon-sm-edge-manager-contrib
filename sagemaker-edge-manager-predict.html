@@ -35,7 +35,7 @@ RED.nodes.registerType('predict',{
     category: 'SageMaker Edge Manager',
     color:"#47d147",
     defaults: {
-        model: { value: "", type: "unload", required: true},
+        model: { value: "", type: "model", required: true},
         name: { value: "" }
     },
     inputs:1,
@@ -44,7 +44,7 @@ RED.nodes.registerType('predict',{
     icon: "",
     align: "left",
     label: function() {
-        return this.name || "SageMaker Edge Manager predict";
+        return this.name || "predict";
     }
 });
 </script>
