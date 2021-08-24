@@ -75,7 +75,7 @@ module.exports = function(RED) {
             t.setTensorMetadata(meta);
             t.setByteData(msg.payload);
             req.setName(node.model.modelName);
-            req.addTensor(t); 
+            req.setTensorList([t]); 
 
             client.service.predict(req, function(err, response) {
                 sendMsg(err, response);
