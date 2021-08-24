@@ -27,18 +27,18 @@ module.exports = function(RED) {
 			return;
 		}
 
-		node.on("input", function(msg) {
+		node.on("input", function(msg, send, done) {
 			var errorNotification = function (err) {
 				node.status({fill:"red",shape:"ring",text:"error"});
-				node.error("failed: " + err.toString(), msg);
-				node.send([null, { err: err }]);
+				done(err);
 				return;
 			}
 			try {
 				const c = msg.payload.slice(0); // Creates a copy of the underlying buffer
 				const x = new type(c.buffer);
 				msg.payload = x;
-				node.send([msg, null]);
+				node.status({});
+				send(msg);
 			} catch (err) {
 				errorNotification(err);
 			}
