@@ -10,8 +10,12 @@
         <input type="text" id="node-input-name" placeholder="Name"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-model"><i class="fa fa-wrench"></i> Model name</label>
-        <input type="text" id="node-input-model" placeholder="Model name"></input>
+        <label for="node-input-model"><i class="fa fa-wrench"></i> Model </label>
+        <input type="text" id="node-input-model" placeholder="Model "></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-modelName"><i class="fa fa-wrench"></i> Model name</label>
+        <input type="text" id="node-input-modelName" placeholder="Model name"></input>
     </div>
 
 </script>
@@ -36,15 +40,16 @@ RED.nodes.registerType('unload',{
     color:"#47d147",
     defaults: {
         modelName: { value: ""},
-        name: { value: "" }
+        name: { value: "" },
+        model: { value:"", type: "model"}
     },
     inputs:1,
     outputs: 1,
     outputLabels: ["success"],
     icon: "",
-    align: "right",
+    align: "left",
     label: function() {
-        return `Unload model ${this.modelName || "from input"}`;
+        return this.name || `SageMaker Edge Manager Unload model` ;
     }
 });
 </script>

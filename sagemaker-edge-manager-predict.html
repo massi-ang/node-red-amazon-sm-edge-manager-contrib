@@ -35,16 +35,16 @@ RED.nodes.registerType('predict',{
     category: 'SageMaker Edge Manager',
     color:"#47d147",
     defaults: {
-        model: { value: "", type: "model", required: true},
+        model: { value: "", type: "unload", required: true},
         name: { value: "" }
     },
     inputs:1,
     outputs: 1,
     outputLabels: ["prediction"],
     icon: "",
-    align: "right",
+    align: "left",
     label: function() {
-        return `Predict for ${this.name || "unknown"}`;
+        return this.name || "SageMaker Edge Manager predict";
     }
 });
 </script>
