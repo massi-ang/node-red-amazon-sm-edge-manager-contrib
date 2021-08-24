@@ -38,8 +38,8 @@ RED.nodes.registerType('model',{
     category: 'config',
     color:"#C0DEED",
     defaults: {
-        modelName: { value: ""},
-        modelUri: { value: ""},
+        modelName: { value: "", required: true},
+        modelUri: { value: "", required: true},
         name: { value: "" }
     },
     icon: "",

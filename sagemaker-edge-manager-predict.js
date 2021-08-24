@@ -10,15 +10,26 @@ module.exports = function(RED) {
 	function SMEdgeManagerPredictNode(n) {
 		RED.nodes.createNode(this,n);
         const node = this;
+        node.model = RED.nodes.getNode(n.model);
+
+        if (node.model === undefined) {
+            node.status({fill:"red",shape:"ring",text:"no model configured"});
+            node.error(`Model ${n.model}`);
+            return;
+        }
         var req = new messages.LoadModelRequest();
-        req.setName(n.model.modelName);
-        req.setUrl(n.model.modelUrl);
+        req.setName(node.model.modelName);
+        req.setUrl(node.model.modelUri);
 
         client.service.loadModel(req, function(err, response) {
             if (err) {
-                node.status({fill:"red",shape:"ring",text:"error loading model"});
-                node.error(err);
-                return;
+                if (err.toString().includes('6')) {
+                    node.status({fill:"yellow",shape:"ring",text:"model already loaded"});
+                } else {
+                    node.status({fill:"red",shape:"ring",text:"error loading model"});
+                    node.error(`Model URL: ${node.model.modelUri} Error ${err}`);
+                    return;
+                }
             } 
             node.status({fill:"green",shape:"dot",text:"ready"});
         })

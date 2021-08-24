@@ -33,9 +33,9 @@ Returns a byte array as output.
 <script type="text/javascript">
 RED.nodes.registerType('predict',{
     category: 'SageMaker Edge Manager',
-    color:"#C0DEED",
+    color:"#47d147",
     defaults: {
-        model: { value: "", type: "model"},
+        model: { value: "", type: "model", required: true},
         name: { value: "" }
     },
     inputs:1,
