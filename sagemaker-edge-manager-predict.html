@@ -18,12 +18,52 @@
 
 <script type="text/x-red" data-help-name="predict">
 <p>
-SageMaker Edge Manager Predictions
-</p>
-<p>
-Invokes the SageMaker Edge Manager agent using the model configured the msg.payload as input.
+Invokes the SageMaker Edge Manager agent using the model configured and the <code>msg.payload</code> as input.
 Returns a byte array as output.
 </p>
+<h3>Inputs</h3>
+<dl class="message-properties">
+    <dt>payload
+        <span class="property-type">buffer | TypedArray | string </span>
+    </dt>
+    <dd> the flattened tensor to be user for the prediction. </dd>
+    <dt class="optional">refreshModel
+        <span class="property-type">bool</span>
+    </dt>
+    <dd> Pass this field set to <code>true</code> to refresh the internal model cache after a new ML model has been loaded. </dd>
+    <dt class="optional">loadModel
+        <span class="property-type">bool</span>
+    </dt>
+    <dd> Pass this field set to <code>true</code> to reload the model configured for this node in SageMaker Edge Manager agent. </dd>
+    <dt class="optional">unLoadModel
+        <span class="property-type">bool</span>
+    </dt>
+    <dd> Pass this field set to <code>true</code> to unload the model from SageMaker Edge Manager agent to allow loading a new model with the same name. </dd>
+    
+</dl>
+<h3>Outputs</h3>
+<p>This node might send multiple messages</p>
+<ol class="node-ports">
+    <li>predictions
+        <dl class="message-properties">
+            <dt>payload <span class="property-type">Uint8Array</span></dt>
+            <dd>the flattened output tensor containing the prediction</dd>
+        </dl>
+        <dl class="message-properties">
+            <dt>metadata <span class="property-type">Array</span></dt>
+            <dd>and array with the shapes of the output tensor</dd>
+        </dl>
+    </li>
+    
+</ol>
+
+<h3>Details</h3>
+This node is configured via a SageMaker Edge Manager Model node that provides both the model name and the model location on the local 
+file system. As the node is created, it tries to load the model and obtain the model input tensor description.
+On reception of a message the node pass the <code>msg.payload</code> as input tensor to SageMaker Edge Manager predict GRPC API.
+The content should be an <code>Uint8Array</code> that will be interpreted according to the tensor shape and data type. You can use 
+node <code>TypedArray</code> to convert between format and <code>tensorflow</code> to manipulate the tensors (reshaping, slicing, transpose).
+
 <h3>References</h3>
 <ul>
 <li>SageMaker Edge Manager</li>

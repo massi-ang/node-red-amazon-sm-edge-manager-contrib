@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const messages = require('./lib/agent_pb');
-const client = require('./lib/agent_client');
+const service = require('./lib/agent_client');
 
 module.exports = function(RED) {
 	"use strict";
@@ -17,6 +17,7 @@ module.exports = function(RED) {
             node.error(`Model ${n.model}`);
             return;
         }
+        const client = service(node.model.endpoint);
         var req = new messages.LoadModelRequest();
         req.setName(node.model.modelName);
         req.setUrl(node.model.modelUri);
@@ -27,7 +28,7 @@ module.exports = function(RED) {
             
                 modelReq.setName(node.model.modelName);
 
-                client.service.describeModel(modelReq, function (err, response) {
+                client.describeModel(modelReq, function (err, response) {
                     if (err) {
                         node.status({fill:"red",shape:"ring",text:"cannot retrieve model"});
                         rej(err);
@@ -49,7 +50,7 @@ module.exports = function(RED) {
 
         const loadModel = function () {
             return new Promise((res, rej) => {
-                client.service.loadModel(req, function(err, response) {
+                client.loadModel(req, function(err, response) {
                     if (err) {
                         if (err.toString().includes('6')) {
                             node.warn(`Model ${node.model.modelName} is already loaded. It might not be the model you want.`);
@@ -97,11 +98,24 @@ module.exports = function(RED) {
                 meta.setDataType(node.tensorMetadata.getDataType());
                 meta.setShapeList(node.tensorMetadata.getShapeList());
                 t.setTensorMetadata(meta);
-                t.setByteData(msg.payload);
+                var data = undefined;
+                // https://nodejs.org/api/buffer.html#buffer_buffers_and_typedarrays
+                try {
+                    if (msg.payload.buffer === undefined) {
+                        const dataCopy = Buffer.from(msg.payload)
+                        data = new Uint8Array(dataCopy, dataCopy.byteOffset, dataCopy.length / Uint8Array.BYTES_PER_ELEMENT)
+                    } else {
+                        data = new Uint8Array(msg.payload.buffer)
+                    }
+                } catch (err) {
+                    done(err);
+                    return;
+                }
+                t.setByteData(data);
                 req.setName(node.model.modelName);
                 req.setTensorsList([t]); 
 
-                client.service.predict(req, function(err, response) {
+                client.predict(req, function(err, response) {
                     if (err) {
                         node.status({fill:"red",shape:"ring",text:"error"});
                         done(err);
